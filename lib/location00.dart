@@ -25,6 +25,8 @@ class LocationService {
   late var lat, longi;
   //late StreamSubscription<LocationDto> locationSubscription;
   late String userIdForLocation;
+  late String userCityForLocatiion;
+  late String userDesignationForLocation;
   late final filepath;
   late final Directory? downloadDirectory;
   late double totalDistance;
@@ -45,6 +47,8 @@ class LocationService {
 
     SharedPreferences pref = await SharedPreferences.getInstance();
     userIdForLocation = pref.getString("userNames") ?? "USER";
+    userCityForLocatiion=pref.getString("userCitys") ?? "CITY";
+    userDesignationForLocation=pref.getString("userDesignation") ?? "DESIGNATION";
     try {
       gpx = new Gpx();
       track = new Trk();
@@ -86,6 +90,8 @@ class LocationService {
             'latitude': position.latitude,
             'longitude': position.longitude,
             'name': userIdForLocation.toString(),
+            'city': userCityForLocatiion.toString(),
+            'designation':userDesignationForLocation.toString(),
             'isActive': true
           }, SetOptions(merge: true));
         }
@@ -144,108 +150,10 @@ class LocationService {
   Future<void> init() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     userIdForLocation = pref.getString("userNames") ?? "USER";
+    userCityForLocatiion=pref.getString("userCitys") ?? "CITY";
+    userDesignationForLocation=pref.getString("userDesignation") ?? "DESIGNATION";
   }
 
-  // Future<void> listenLocation() async {
-  //   downloadDirectory = await getDownloadsDirectory();
-  //   filepath = "${downloadDirectory?.path}/track${DateFormat('dd-MM-yyyy').format(DateTime.now())}.gpx";
-  //   gpx = new Gpx();
-  //   track = new Trk();
-  //   segment = new Trkseg();
-  //   file = File(filepath);
-  //   isFirstRun = !file.existsSync();
-  //   isConnected = await isInternetConnected();
-  //   try {
-  //     //WakelockPlus.enabled;
-  //     AndroidSettings settings = const AndroidSettings(
-  //       accuracy: LocationAccuracy.NAVIGATION,
-  //       interval: 1,
-  //       distanceFilter: 2,
-  //     );
-  //
-  //     if (file != null) {
-  //       if (isFirstRun) {
-  //         file?.createSync();
-  //       } else {
-  //         Gpx existingGpx = GpxReader().fromString(file!.readAsStringSync());
-  //         if (existingGpx.trks.isNotEmpty) {
-  //           track = existingGpx.trks[0];
-  //           segment = new Trkseg();
-  //           track.trksegs.add(segment);
-  //         } else {
-  //           track = new Trk();
-  //           segment = new Trkseg();
-  //           track.trksegs.add(segment);
-  //         }
-  //         gpx.trks.add(track);
-  //       }
-  //     }
-  //
-  //     LocationManager().interval = settings.interval;
-  //     LocationManager().distanceFilter = settings.distanceFilter;
-  //     LocationManager().accuracy = settings.accuracy;
-  //     LocationManager().notificationTitle = 'Running Location Service';
-  //
-  //     await LocationManager().start();
-  //     locationSubscription =
-  //         LocationManager().locationStream.listen((LocationDto position) async {
-  //           isConnected = await isInternetConnected();
-  //           if (isConnected) {
-  //             await FirebaseFirestore.instance
-  //                 .collection('location')
-  //                 .doc(userIdForLocation.toString())
-  //                 .set({
-  //               'latitude': position.latitude,
-  //               'longitude': position.longitude,
-  //               'name': userIdForLocation.toString(),
-  //               'isActive': true
-  //             }, SetOptions(merge: true));
-  //           }
-  //           print("w100 'Longitute ${position.latitude} Latitute ${position.longitude}'");
-  //           final trackPoint = Wpt(
-  //             lat: position.latitude,
-  //             lon: position.longitude,
-  //             time: DateTime.now(),
-  //           );
-  //
-  //           if (lastTrackPoint != null) {
-  //             totalDistance += calculateDistance(
-  //               lastTrackPoint!.latitude,
-  //               lastTrackPoint!.longitude,
-  //               position.latitude,
-  //               position.longitude,
-  //             );
-  //           }
-  //
-  //           lastTrackPoint = geo.Position(
-  //             latitude: position.latitude,
-  //             longitude: position.longitude,
-  //             accuracy: 0,
-  //             altitude: 0,
-  //             altitudeAccuracy: 0,
-  //             heading: 0,
-  //             headingAccuracy: 0,
-  //             speed: 0,
-  //             speedAccuracy: 0,
-  //             timestamp: DateTime.now(),
-  //           );
-  //
-  //           segment.trkpts.add(trackPoint);
-  //           if (isFirstRun) {
-  //             track.trksegs.add(segment);
-  //             gpx.trks.add(track);
-  //             isFirstRun = false;
-  //           }
-  //
-  //           gpxString = GpxWriter().asString(gpx, pretty: true);
-  //           print("w100 $gpxString");
-  //
-  //           file?.writeAsStringSync(gpxString);
-  //         });
-  //   } catch (e) {
-  //     print("w100 ERRORRRR:   $e");
-  //   }
-  // }
 
 
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
